@@ -31,9 +31,6 @@ if (isset($_GET['authpic'])) {
 		case 'png':
 			define('IN_DCRM', true);
 			include_once ABSPATH.'system/class/validatecode.php';
-			$_vc = new ValidateCode();
-			$_vc->doimg();
-			$_SESSION['VCODE'] = $_vc->getCode();
 			exit();
 			break;
 		default:
@@ -69,20 +66,6 @@ if(isset($_POST['language']) && !empty($_POST['language'])) {
 }
 if(isset($_POST['submit'])) {
 	if (!empty($_POST['username']) AND !empty($_POST['password'])) {
-		if (empty($_POST['authcode'])) {
-			unset($_SESSION['VCODE']);
-			$error = "authcode";
-			goto endlabel;
-		}
-		if (strtolower($_POST['authcode']) != strtolower($_SESSION['VCODE'])) {
-			unset($_SESSION['VCODE']);
-			$_SESSION['try'] = $_SESSION['try'] + 1;
-			$_SESSION['lasttry'] = time();
-			$error = "authcode";
-			goto endlabel;
-		} else {
-			unset($_SESSION['VCODE']);
-		}
 		if (!preg_match("#^[0-9a-zA-Z\_]*$#i", $_POST['username'])) {
 			$_SESSION['try'] = $_SESSION['try'] + 1;
 			$_SESSION['lasttry'] = time();
@@ -235,12 +218,8 @@ if (!isset($_SESSION['try']) OR $_SESSION['try'] <= DCRM_MAXLOGINFAIL) {
 										</div>
 										<div class="form-stack has-icon pull-left">
 											<div class="input-group image-input-group">
-												<input type="text" name="authcode" class="form-control input-lg authcode" placeholder="<?php _e('Verify Code'); ?>" data-parsley-errors-container="#error-container" data-parsley-error-message="<?php _e('Please fill in the verify code'); ?>" data-parsley-required />
-												<span class="input-group-addon verifycode">
-													<img src="login.php?authpic=png&amp;rand=<?php echo(time()); ?>" style="height: 44px;" onclick="this.src='login.php?authpic=png&amp;rand=' + new Date().getTime();" />
-												</span>
+											
 											</div>
-											<i class="ico-quill3 form-control-icon"></i>
 										</div>
 									</div>
 
